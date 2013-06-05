@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta charset="utf-8">
+	<title>Find Center of Circle given 3 Points on the Circumference</title>
+
+	<style type="text/css">
+	    .error { color: red; }
+	</style>
+	
+	<script type="text/javascript" src="utmconv.js"></script>
+	<script type="text/javascript" src="output.js"></script>
+
+	<script type="text/javascript">
+/*jslint browser: true, vars: true, white: true */
+/*global UTMConv: false, Output: false */
+
+	    var output = new Output("output", "error");
+
+	    // Get integer text field with error checking.
+	    function get_int(id, what) {
+		"use strict";
+		var s = document.getElementById(id).value;
+		var val = parseInt(s, 10);
+		if (isNaN(val)) {
+		    throw new Error(what + " not recognized as integer: '" + s + "'");
+		}
+		return val;
+	    }
+
+	    // Get float text field with error checking.
+	    function get_float(id, what) {
+		"use strict";
+		var s = document.getElementById(id).value;
+		var val = parseFloat(s);
+		if (isNaN(val)) {
+		    throw new Error(what + " not recognized as floating-point number: '" + s + "'");
+		}
+		return val;
+	    }
+
+	    function sqr(a) {
+		"use strict";
+		return a * a;
+	    }
+
+	    function dist(a, b) {
+		"use strict";
+		if (a.utmz !== b.utmz) {
+		    throw new Error("Can't calculate distance between UTM coordinates in different zones!");
+		}
+		return Math.sqrt(sqr(a.easting - b.easting) + sqr(a.northing - b.northing));
+	    }
+
+	    function circle(b, c, d) {
+		"use strict";
+		if (b.utmz !== c.utmz || b.utmz !== d.utmz) {
+		    throw new Error("Can't find circle through UTM coordinates in different zones!");
+		}
+
+		var temp = sqr(c.easting) + sqr(c.northing);
+		var bc = (sqr(b.easting) + sqr(b.northing) - temp) / 2.0;
+		var cd = (temp - sqr(d.easting) - sqr(d.northing)) / 2.0;
+		var det = (b.easting-c.easting) * (c.northing-d.northing) - (c.easting-d.easting) * (b.northing-c.northing);
+
+		if (Math.abs(det) < 1e-14) {
+		    throw new Error("The 3 points lie on a straight line!");
+		}
+
+		return new UTMConv.UTMCoords(b.utmz, 
+		    (bc * (c.northing-d.northing) - cd * (b.northing-c.northing)) / det,
+		    ((b.easting-c.easting) * cd - (c.easting-d.easting) * bc) / det
+		);
+	    }
+
+	    function main() {
+		"use strict";
+		try {
+		    var c1latdir = document.getElementById("c1latdir").value;
+		    var c1latdeg = get_int("c1latdeg", "first latitude degrees");
+		    var c1latmin = get_float("c1latmin", "first latitude minutes");
+		    var c1lngdir = document.getElementById("c1lngdir").value;
+		    var c1lngdeg = get_int("c1lngdeg", "first longitude degrees");
+		    var c1lngmin = get_float("c1lngmin", "first longitude minutes");
+
+		    var c2latdir = document.getElementById("c2latdir").value;
+		    var c2latdeg = get_int("c2latdeg", "second latitude degrees");
+		    var c2latmin = get_float("c2latmin", "second latitude minutes");
+		    var c2lngdir = document.getElementById("c2lngdir").value;
+		    var c2lngdeg = get_int("c2lngdeg", "second longitude degrees");
+		    var c2lngmin = get_float("c2lngmin", "second longitude minutes");
+
+		    var c3latdir = document.getElementById("c3latdir").value;
+		    var c3latdeg = get_int("c3latdeg", "third latitude degrees");
+		    var c3latmin = get_float("c3latmin", "third latitude minutes");
+		    var c3lngdir = document.getElementById("c3lngdir").value;
+		    var c3lngdeg = get_int("c3lngdeg", "third longitude degrees");
+		    var c3lngmin = get_float("c3lngmin", "third longitude minutes");
+
+		    // First coordinates sets the UTM zone for the other two.
+		    var c1 = new UTMConv.DegMinCoords(c1latdir, c1latdeg, c1latmin, c1lngdir, c1lngdeg, c1lngmin);
+		    var utm1 = c1.to_deg().to_utm();
+		    var c2 = new UTMConv.DegMinCoords(c2latdir, c2latdeg, c2latmin, c2lngdir, c2lngdeg, c2lngmin);
+		    var utm2 = c2.to_deg().to_utm(utm1.utmz);
+		    var c3 = new UTMConv.DegMinCoords(c3latdir, c3latdeg, c3latmin, c3lngdir, c3lngdeg, c3lngmin);
+		    var utm3 = c3.to_deg().to_utm(utm1.utmz);
+
+		    var frag = output.newFrag();
+		    frag.writeln_head(" ");
+		    frag.writeln("b = " + c1);
+		    frag.writeln("b = " + utm1);
+		    frag.writeln("c = " + c2);
+		    frag.writeln("c = " + utm2);
+		    frag.writeln("d = " + c3);
+		    frag.writeln("d = " + utm3);
+		    frag.writeln(" ");
+
+		    var centerUTM = circle(utm1, utm2, utm3);
+		    var centerDegMin = centerUTM.to_deg().to_degmin();
+		    frag.writeln("center = " + centerUTM);
+		    frag.writeln("center = " + centerDegMin);
+		    frag.writeln(" ");
+
+		    frag.writeln("dist from b = " + dist(utm1, centerUTM) + " meters");
+		    frag.writeln("dist from c = " + dist(utm2, centerUTM) + " meters");
+		    frag.writeln("dist from d = " + dist(utm3, centerUTM) + " meters");
+		    frag.writeln(" ");
+		    output.writeFrag(frag);
+		}
+		catch (e) {
+		    output.errorln("Error: " + e.message);
+		    return false;
+		}
+	    }
+
+	    function init() {
+		"use strict";
+		output.clearOutput();
+		document.getElementById("coords_input_form").onsubmit = function () { main(); return false; };
+		document.getElementById("clear_btn").onclick = function () { output.clearOutput(); };
+	    }
+
+	    window.onload = init;
+	</script>
+    </head>
+
+    <body>
+	<noscript>
+	    <span class="error">
+		This web page requires a browser that supports Javascript.<br />Your browser either does not support Javascript or it has Javascript disabled. Please upgrade your browser or enable Javascript support.<br />&nbsp;<br />
+	    </span>
+	</noscript>
+
+	<h1>Find Center of Circle given 3 Points on the Circumference</h1>
+	<form id="coords_input_form" action="#">
+	    Enter 3 coordinates along the circumference of the circle:<br />
+
+	    First point:<br />	     		
+	    
+	    <select id="c1latdir"><option value="N" selected="selected">N</option><option value="S">S</option></select>
+	    <input type="text" id="c1latdeg" size="5" value="38" onfocus="select();" />
+	    <input type="text" id="c1latmin" size="10" value="38.908" onfocus="select();" />
+	    <br />
+
+	    <select id="c1lngdir"><option value="W" selected="selected">W</option><option value="E">E</option></select>
+	    <input type="text" id="c1lngdeg" size="5" value="75" onfocus="select();" />
+	    <input type="text" id="c1lngmin" size="10" value="36.486" onfocus="select();" />
+	    <br />
+
+	    Second point:<br />	     		
+	    
+	    <select id="c2latdir"><option value="N" selected="selected">N</option><option value="S">S</option></select>
+	    <input type="text" id="c2latdeg" size="5" value="38" onfocus="select();" />
+	    <input type="text" id="c2latmin" size="10" value="33.002" onfocus="select();" />
+	    <br />
+
+	    <select id="c2lngdir"><option value="W" selected="selected">W</option><option value="E">E</option></select>
+	    <input type="text" id="c2lngdeg" size="5" value="75" onfocus="select();" />
+	    <input type="text" id="c2lngmin" size="10" value="34.644" onfocus="select();" />
+	    <br />
+
+	    Third point:<br />	     		
+	    
+	    <select id="c3latdir"><option value="N" selected="selected">N</option><option value="S">S</option></select>
+	    <input type="text" id="c3latdeg" size="5" value="38" onfocus="select();" />
+	    <input type="text" id="c3latmin" size="10" value="41.259" onfocus="select();" />
+	    <br />
+
+	    <select id="c3lngdir"><option value="W" selected="selected">W</option><option value="E">E</option></select>
+	    <input type="text" id="c3lngdeg" size="5" value="75" onfocus="select();" />
+	    <input type="text" id="c3lngmin" size="10" value="23.328" onfocus="select();" />
+	    <br />
+
+	    <input type="submit" value="Find circle" />&nbsp;
+
+	    <input type="button" id="clear_btn" value="Clear results" />
+	</form>
+
+	<hr />
+	<br />
+	<div id="output"></div>
+    </body>
+</html>
+<!-- vim:set tw=0: -->
