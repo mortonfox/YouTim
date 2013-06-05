@@ -13,5 +13,5 @@ YouTim includes a few examples:
 * [UTM conversion demo](utmdemo.htm)
 * [Find Center of Circle given 3 Points on the Circumference](centercirc.htm)
 
-To view or clone the code, see: https://github.com/mortonfox/YouTim/tree/gh-pages
+To view or clone the code, see: http://github.com/mortonfox/YouTim/tree/gh-pages
 
