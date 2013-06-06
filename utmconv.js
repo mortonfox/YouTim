@@ -103,6 +103,10 @@ var UTMConv = (function () {
 	    return "Zone " + this.utmz + " Easting " + this.easting + " Northing " + this.northing;
 	};
 
+	my.UTMCoords.prototype.to_degmin = function (datum) {
+	    return this.to_deg(datum).to_degmin();
+	};
+
 	my.UTMCoords.prototype.to_deg = function (datum) {
 	    // Convert UTM coords to Deg coords. If datum is unspecified,
 	    // default to wgs84.
@@ -180,6 +184,10 @@ var UTMConv = (function () {
 	    var lngmin = 60.0 * (lngd - lngdeg);
 
 	    return new my.DegMinCoords(latdir, latdeg, latmin, lngdir, lngdeg, lngmin, this.datum);
+	};
+
+	my.DegMinCoords.prototype.to_utm = function (utmz) {
+	    return this.to_deg().to_utm(utmz);
 	};
 
 	my.DegMinCoords.prototype.to_deg = function () {

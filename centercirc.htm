@@ -100,11 +100,11 @@
 
 		    // First coordinates sets the UTM zone for the other two.
 		    var c1 = new UTMConv.DegMinCoords(c1latdir, c1latdeg, c1latmin, c1lngdir, c1lngdeg, c1lngmin);
-		    var utm1 = c1.to_deg().to_utm();
+		    var utm1 = c1.to_utm();
 		    var c2 = new UTMConv.DegMinCoords(c2latdir, c2latdeg, c2latmin, c2lngdir, c2lngdeg, c2lngmin);
-		    var utm2 = c2.to_deg().to_utm(utm1.utmz);
+		    var utm2 = c2.to_utm(utm1.utmz);
 		    var c3 = new UTMConv.DegMinCoords(c3latdir, c3latdeg, c3latmin, c3lngdir, c3lngdeg, c3lngmin);
-		    var utm3 = c3.to_deg().to_utm(utm1.utmz);
+		    var utm3 = c3.to_utm(utm1.utmz);
 
 		    var frag = output.newFrag();
 		    frag.writeln_head(" ");
@@ -117,7 +117,7 @@
 		    frag.writeln(" ");
 
 		    var centerUTM = circle(utm1, utm2, utm3);
-		    var centerDegMin = centerUTM.to_deg().to_degmin();
+		    var centerDegMin = centerUTM.to_degmin();
 		    frag.writeln("center = " + centerUTM);
 		    frag.writeln("center = " + centerDegMin);
 		    frag.writeln(" ");

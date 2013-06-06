@@ -51,7 +51,7 @@
 		    var lngmin = get_float("lngmin", "longitude minutes");
 
 		    var degmin = new UTMConv.DegMinCoords(latdir, latdeg, latmin, lngdir, lngdeg, lngmin);
-		    var utm = degmin.to_deg().to_utm();
+		    var utm = degmin.to_utm();
 
 		    var frag = output.newFrag();
 		    frag.writeln_head(degmin);
@@ -75,7 +75,7 @@
 		    var northing = get_float("northing", "UTM northing");
 
 		    var utm = new UTMConv.UTMCoords(utmz, easting, northing);
-		    var degmin = utm.to_deg().to_degmin();
+		    var degmin = utm.to_degmin();
 
 		    var frag = output.newFrag();
 		    frag.writeln_head(utm);
