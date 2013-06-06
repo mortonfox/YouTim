@@ -158,6 +158,7 @@ var UTMConv = (function () {
 	};
 
 	my.DegCoords.prototype.to_degmin = function () {
+	    // Convert degree format to degree and minutes format.
 
 	    var latd = this.latd;
 	    var lngd = this.lngd;
@@ -182,6 +183,8 @@ var UTMConv = (function () {
 	};
 
 	my.DegMinCoords.prototype.to_deg = function () {
+	    // Convert degree and minutes format to degree format.
+	    
 	    var latd = this.latdeg + this.latmin / 60.0;
 	    if ("S" === this.latdir || "s" === this.latdir) {
 		latd = -latd;

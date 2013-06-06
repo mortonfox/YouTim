@@ -10,6 +10,7 @@ var Output = function (divName, errorStyle) {
     this.frag_count = 0;
 };
 
+// Clear the output div.
 Output.prototype.clearOutput = function () {
     "use strict";
     var output = document.getElementById(this.divName);
@@ -38,6 +39,7 @@ Output.prototype.newFrag = function () {
     return new Output.OutputFrag(frag, this.frag_count);
 };
 
+// Write a document fragment to the output div.
 Output.prototype.writeFrag = function (frag) {
     "use strict";
     var output = document.getElementById(this.divName);
