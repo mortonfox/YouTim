@@ -11,46 +11,24 @@
 	
 	<script type="text/javascript" src="utmconv.js"></script>
 	<script type="text/javascript" src="output.js"></script>
+	<script type="text/javascript" src="input.js"></script>
 
 	<script type="text/javascript">
 /*jslint browser: true, vars: true, white: true */
-/*global UTMConv: false, Output: false */
+/*global UTMConv: false, Output: false, Input: false */
 
 	    var output = new Output("output", "error");
-
-	    // Get integer text field with error checking.
-	    function get_int(id, what) {
-		"use strict";
-		var s = document.getElementById(id).value;
-		var val = parseInt(s, 10);
-		if (isNaN(val)) {
-		    throw new Error(what + " not recognized as integer: '" + s + "'");
-		}
-		return val;
-	    }
-
-	    // Get float text field with error checking.
-	    function get_float(id, what) {
-		"use strict";
-		var s = document.getElementById(id).value;
-		var val = parseFloat(s);
-		if (isNaN(val)) {
-		    throw new Error(what + " not recognized as floating-point number: '" + s + "'");
-		}
-		return val;
-	    }
 
 	    function conv_geo_to_utm() {
 		"use strict";
 		try {
-		    var latdir = document.getElementById("latdir").value;
-		    var latdeg = get_int("latdeg", "latitude degrees");
-		    var latmin = get_float("latmin", "latitude minutes");
-		    var lngdir = document.getElementById("lngdir").value;
-		    var lngdeg = get_int("lngdeg", "longitude degrees");
-		    var lngmin = get_float("lngmin", "longitude minutes");
-
-		    var degmin = new UTMConv.DegMinCoords(latdir, latdeg, latmin, lngdir, lngdeg, lngmin);
+		    var degmin = Input.get_degmin(
+			    "latdir",
+			    "latdeg", "latitude degrees",
+			    "latmin", "latitude minutes",
+			    "lngdir",
+			    "lngdeg", "longitude degrees",
+			    "lngmin", "longitude minutes");
 		    var utm = degmin.to_utm();
 
 		    var frag = output.newFrag();
@@ -70,11 +48,10 @@
 	    function conv_utm_to_geo() {
 		"use strict";
 		try {
-		    var utmz = get_int("utmz", "UTM zone");
-		    var easting = get_float("easting", "UTM easting");
-		    var northing = get_float("northing", "UTM northing");
-
-		    var utm = new UTMConv.UTMCoords(utmz, easting, northing);
+		    var utm = Input.get_utm(
+			    "utmz", "UTM zone",
+			    "easting", "UTM easting",
+			    "northing", "UTM northing");
 		    var degmin = utm.to_degmin();
 
 		    var frag = output.newFrag();

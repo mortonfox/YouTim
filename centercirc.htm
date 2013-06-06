@@ -11,34 +11,13 @@
 	
 	<script type="text/javascript" src="utmconv.js"></script>
 	<script type="text/javascript" src="output.js"></script>
+	<script type="text/javascript" src="input.js"></script>
 
 	<script type="text/javascript">
 /*jslint browser: true, vars: true, white: true */
-/*global UTMConv: false, Output: false */
+/*global UTMConv: false, Output: false, Input: false */
 
 	    var output = new Output("output", "error");
-
-	    // Get integer text field with error checking.
-	    function get_int(id, what) {
-		"use strict";
-		var s = document.getElementById(id).value;
-		var val = parseInt(s, 10);
-		if (isNaN(val)) {
-		    throw new Error(what + " not recognized as integer: '" + s + "'");
-		}
-		return val;
-	    }
-
-	    // Get float text field with error checking.
-	    function get_float(id, what) {
-		"use strict";
-		var s = document.getElementById(id).value;
-		var val = parseFloat(s);
-		if (isNaN(val)) {
-		    throw new Error(what + " not recognized as floating-point number: '" + s + "'");
-		}
-		return val;
-	    }
 
 	    function sqr(a) {
 		"use strict";
@@ -77,33 +56,33 @@
 	    function main() {
 		"use strict";
 		try {
-		    var c1latdir = document.getElementById("c1latdir").value;
-		    var c1latdeg = get_int("c1latdeg", "first latitude degrees");
-		    var c1latmin = get_float("c1latmin", "first latitude minutes");
-		    var c1lngdir = document.getElementById("c1lngdir").value;
-		    var c1lngdeg = get_int("c1lngdeg", "first longitude degrees");
-		    var c1lngmin = get_float("c1lngmin", "first longitude minutes");
+		    var c1 = Input.get_degmin(
+			    "c1latdir",
+			    "c1latdeg", "first latitude degrees",
+			    "c1latmin", "first latitude minutes",
+			    "c1lngdir",
+			    "c1lngdeg", "first longitude degrees",
+			    "c1lngmin", "first longitude minutes");
 
-		    var c2latdir = document.getElementById("c2latdir").value;
-		    var c2latdeg = get_int("c2latdeg", "second latitude degrees");
-		    var c2latmin = get_float("c2latmin", "second latitude minutes");
-		    var c2lngdir = document.getElementById("c2lngdir").value;
-		    var c2lngdeg = get_int("c2lngdeg", "second longitude degrees");
-		    var c2lngmin = get_float("c2lngmin", "second longitude minutes");
+		    var c2 = Input.get_degmin(
+			    "c2latdir",
+			    "c2latdeg", "second latitude degrees",
+			    "c2latmin", "second latitude minutes",
+			    "c2lngdir",
+			    "c2lngdeg", "second longitude degrees",
+			    "c2lngmin", "second longitude minutes");
 
-		    var c3latdir = document.getElementById("c3latdir").value;
-		    var c3latdeg = get_int("c3latdeg", "third latitude degrees");
-		    var c3latmin = get_float("c3latmin", "third latitude minutes");
-		    var c3lngdir = document.getElementById("c3lngdir").value;
-		    var c3lngdeg = get_int("c3lngdeg", "third longitude degrees");
-		    var c3lngmin = get_float("c3lngmin", "third longitude minutes");
+		    var c3 = Input.get_degmin(
+			    "c3latdir",
+			    "c3latdeg", "third latitude degrees",
+			    "c3latmin", "third latitude minutes",
+			    "c3lngdir",
+			    "c3lngdeg", "third longitude degrees",
+			    "c3lngmin", "third longitude minutes");
 
-		    // First coordinates sets the UTM zone for the other two.
-		    var c1 = new UTMConv.DegMinCoords(c1latdir, c1latdeg, c1latmin, c1lngdir, c1lngdeg, c1lngmin);
+		    // First coordinate sets the UTM zone for the other two.
 		    var utm1 = c1.to_utm();
-		    var c2 = new UTMConv.DegMinCoords(c2latdir, c2latdeg, c2latmin, c2lngdir, c2lngdeg, c2lngmin);
 		    var utm2 = c2.to_utm(utm1.utmz);
-		    var c3 = new UTMConv.DegMinCoords(c3latdir, c3latdeg, c3latmin, c3lngdir, c3lngdeg, c3lngmin);
 		    var utm3 = c3.to_utm(utm1.utmz);
 
 		    var frag = output.newFrag();
