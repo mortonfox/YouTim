@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<title>UTM conversion demo</title>
 
+	<link href="github.css" rel="stylesheet" />
 	<style type="text/css">
 	    .error { color: red; }
 	</style>
@@ -116,17 +117,15 @@
 	    <select id="latdir"><option value="N" selected="selected">N</option><option value="S">S</option></select>
 	    <input type="text" id="latdeg" size="5" value="40" onfocus="select();" />
 	    <input type="text" id="latmin" size="10" value="30.0" onfocus="select();" />
-	    <br />
 
 	    <select id="lngdir"><option value="W" selected="selected">W</option><option value="E">E</option></select>
 	    <input type="text" id="lngdeg" size="5" value="73" onfocus="select();" />
 	    <input type="text" id="lngmin" size="10" value="30.0" onfocus="select();" />
-	    <br />
 
-	    <input type="submit" value="Convert it" />&nbsp;
+	    <input type="submit" value="Convert it" />
 	</form>
 
-	<hr />
+	<br />
 
 	<form id="utm_to_geo_form" action="#">
 	    Enter UTM coordinates here to get dd mm.mmm coordinates below:<br />
@@ -134,19 +133,17 @@
 	    <input type="text" id="utmz" size="4" value="18" onfocus="select();" />
 	    <input type="text" id="easting" size="20" value="627103.1" onfocus="select();" />
 	    <input type="text" id="northing" size="20" value="4484335.4" onfocus="select();" />
-	    <br />
 
-	    <input type="submit" value="Convert it" />&nbsp;
+	    <input type="submit" value="Convert it" />
 	</form>
 
-	<hr />
+	<br />
 
 	<form action="#">
 	    <input type="button" id="clear_btn" value="Clear results" />
 	</form>
 
 	<hr />
-	<br />
 	<div id="output"></div>
     </body>
 </html>

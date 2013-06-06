@@ -1,4 +1,4 @@
-/* From: https://gist.github.com/andyferra/2554919 */
+/* Borrowed from: https://gist.github.com/andyferra/2554919 by Andy Ferra, with minor modifications. */
 
 body {
   font-family: Helvetica, arial, sans-serif;
@@ -36,9 +36,11 @@ h1, h2, h3, h4, h5, h6 {
   cursor: text;
   position: relative; }
 
+  /*
 h1:hover a.anchor, h2:hover a.anchor, h3:hover a.anchor, h4:hover a.anchor, h5:hover a.anchor, h6:hover a.anchor {
   background: url("../../images/modules/styleguide/para.png") no-repeat 10px center;
   text-decoration: none; }
+*/
 
 h1 tt, h1 code {
   font-size: inherit; }
@@ -84,10 +86,10 @@ p, blockquote, ul, ol, dl, li, table, pre {
   margin: 15px 0; }
 
 hr {
-  background: transparent url("../../images/modules/pulls/dirty-shade.png") repeat-x 0 0;
-  border: 0 none;
-  color: #cccccc;
-  height: 4px;
+//  background: transparent url("https://github.com/images/modules/pulls/dirty-shade.png") repeat-x 0 0;
+  border: solid 1px;
+  color: #666;
+  height: 1px;
   padding: 0; }
 
 body > h2:first-child {
