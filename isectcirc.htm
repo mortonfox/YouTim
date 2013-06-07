@@ -45,6 +45,7 @@
 
 	    // Rotate a point around origin by theta radians.
 	    function rotate(x, y, theta) {
+		"use strict";
 		var rotx = Math.cos(theta) * x - Math.sin(theta) * y;
 		var roty = Math.sin(theta) * x + Math.cos(theta) * y;
 		return { x : rotx, y : roty };
@@ -53,7 +54,7 @@
 	    function intersect(utm1, r1, utm2, r2) {
 		"use strict";
 
-		if (utm1.utmz != utm2.utmz) {
+		if (utm1.utmz !== utm2.utmz) {
 		    throw new Error("Can't perform calculations on UTM coordinates in different zones!");
 		}
 
