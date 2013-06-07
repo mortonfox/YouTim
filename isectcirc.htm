@@ -30,6 +30,56 @@
 		return dist;
 	    }
 
+	    function sqr(a) {
+		"use strict";
+		return a * a;
+	    }
+
+	    function dist(a, b) {
+		"use strict";
+		if (a.utmz !== b.utmz) {
+		    throw new Error("Can't calculate distance between UTM coordinates in different zones!");
+		}
+		return Math.sqrt(sqr(a.easting - b.easting) + sqr(a.northing - b.northing));
+	    }
+
+	    // Rotate a point around origin by theta radians.
+	    function rotate(x, y, theta) {
+		var rotx = Math.cos(theta) * x - Math.sin(theta) * y;
+		var roty = Math.sin(theta) * x + Math.cos(theta) * y;
+		return { x : rotx, y : roty };
+	    }
+
+	    function intersect(utm1, r1, utm2, r2) {
+		"use strict";
+
+		if (utm1.utmz != utm2.utmz) {
+		    throw new Error("Can't perform calculations on UTM coordinates in different zones!");
+		}
+
+		var d = dist(utm1, utm2);
+		if (d < 1e-14) { throw new Error("The two circles are concentric!"); }
+		if (d > r1 + r2) { 
+		    throw new Error("The two circles do not intersect! Distance " + 
+			    d + " meters is greater than " + r1 + " and " + r2); 
+		}
+
+		/* Using formulae from http://mathworld.wolfram.com/Circle-CircleIntersection.html */
+		var x = (sqr(d) - sqr(r2) + sqr(r1)) / (2 * d);
+		var ysq = sqr(r1) - sqr(x);
+		var y = Math.sqrt(ysq);
+
+		var theta = Math.atan2(utm2.northing - utm1.northing, utm2.easting - utm1.easting);
+
+		/* Rotate intersection points around origin and add to utm1 to get actual intersection coordinates. */
+		var p1 = rotate(x, y, theta);
+		var p2 = rotate(x, -y, theta);
+
+		var isect1 = new UTMConv.UTMCoords(utm1.utmz, utm1.easting + p1.x, utm1.northing + p1.y);
+		var isect2 = new UTMConv.UTMCoords(utm1.utmz, utm1.easting + p2.x, utm1.northing + p2.y);
+		return [isect1, isect2];
+	    }
+
 	    function main() {
 		"use strict";
 		try {
@@ -61,6 +111,10 @@
 		    var c2unit = document.getElementById("c2unit").value;
 		    var r2 = convert_to_meters(c2radius, c2unit);
 
+		    var isects = intersect(utm1, r1, utm2, r2);
+		    var isect1= isects[0];
+		    var isect2= isects[1];
+
 		    var frag = output.newFrag();
 		    frag.writeln_head(" ");
 		    frag.writeln("c1 center = " + c1);
@@ -70,6 +124,19 @@
 		    frag.writeln("c2 center = " + c2);
 		    frag.writeln("c2 center = " + utm2);
 		    frag.writeln("c2 radius = " + r2 + " meters");
+		    frag.writeln(" ");
+		    frag.writeln("dist between c1, c2 centers = " + dist(utm1, utm2) + " meters");
+		    frag.writeln(" ");
+
+		    frag.writeln("isect1 = " + isect1);
+		    frag.writeln("isect1 = " + isect1.to_degmin());
+		    frag.writeln("isect1 dist from c1 = " + dist(utm1, isect1) + " meters");
+		    frag.writeln("isect1 dist from c2 = " + dist(utm2, isect1) + " meters");
+		    frag.writeln(" ");
+		    frag.writeln("isect2 = " + isect2);
+		    frag.writeln("isect2 = " + isect2.to_degmin());
+		    frag.writeln("isect2 dist from c1 = " + dist(utm1, isect2) + " meters");
+		    frag.writeln("isect2 dist from c2 = " + dist(utm2, isect2) + " meters");
 		    frag.writeln(" ");
 
 		    output.writeFrag(frag);
@@ -110,7 +177,7 @@
 	    <input type="text" id="c1lngmin" size="10" value="36.486" onfocus="select();" />
 	    <br />
 
-	    <input type="text" id="c1radius" size="10" value="14000" onfocus="select();" />
+	    <input type="text" id="c1radius" size="10" value="7000" onfocus="select();" />
 	    <select id="c1unit">
 		<option value="m" selected="selected">meters</option>
 		<option value="km">kilometers</option>
@@ -130,7 +197,7 @@
 	    <input type="text" id="c2lngmin" size="10" value="34.644" onfocus="select();" />
 	    <br />
 
-	    <input type="text" id="c2radius" size="10" value="15000" onfocus="select();" />
+	    <input type="text" id="c2radius" size="10" value="5000" onfocus="select();" />
 	    <select id="c2unit">
 		<option value="m" selected="selected">meters</option>
 		<option value="km">kilometers</option>
