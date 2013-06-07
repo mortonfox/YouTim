@@ -93,9 +93,8 @@
 		    frag.writeln(" ");
 
 		    var centerUTM = circle(utm1, utm2, utm3);
-		    var centerDegMin = centerUTM.to_degmin();
 		    frag.writeln("center = " + centerUTM);
-		    frag.writeln("center = " + centerDegMin);
+		    frag.writeln("center = " + centerUTM.to_degmin());
 		    frag.writeln(" ");
 
 		    frag.writeln("dist from b = " + dist(utm1, centerUTM) + " meters");
@@ -106,7 +105,6 @@
 		}
 		catch (e) {
 		    output.errorln("Error: " + e.message);
-		    return false;
 		}
 	    }
 

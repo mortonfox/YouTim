@@ -26,19 +26,15 @@
 			    "lngdir",
 			    "lngdeg", "longitude degrees",
 			    "lngmin", "longitude minutes");
-		    var utm = degmin.to_utm();
 
 		    var frag = output.newFrag();
 		    frag.writeln_head(degmin);
-		    frag.writeln(utm);
+		    frag.writeln(degmin.to_utm());
 		    frag.writeln(" ");
 		    output.writeFrag(frag);
-
-		    return true;
 		}
 		catch (e) {
 		    output.errorln("Error: " + e.message);
-		    return false;
 		}
 	    }
 
@@ -49,19 +45,15 @@
 			    "utmz", "UTM zone",
 			    "easting", "UTM easting",
 			    "northing", "UTM northing");
-		    var degmin = utm.to_degmin();
 
 		    var frag = output.newFrag();
 		    frag.writeln_head(utm);
-		    frag.writeln(degmin);
+		    frag.writeln(utm.to_degmin());
 		    frag.writeln(" ");
 		    output.writeFrag(frag);
-
-		    return true;
 		}
 		catch (e) {
 		    output.errorln("Error: " + e.message);
-		    return false;
 		}
 	    }
 
