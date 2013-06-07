@@ -3,12 +3,12 @@
  */
 /*jslint browser: true, vars: true, white: true */
 
-var Output = function (divName, errorStyle) {
+function Output(divName, errorStyle) {
     "use strict";
     this.divName = divName || "output";
     this.errorStyle = errorStyle || "error";
     this.frag_count = 0;
-};
+}
 
 // Clear the output div.
 Output.prototype.clearOutput = function () {
