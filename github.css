@@ -86,7 +86,7 @@ p, blockquote, ul, ol, dl, li, table, pre {
   margin: 15px 0; }
 
 hr {
-//  background: transparent url("https://github.com/images/modules/pulls/dirty-shade.png") repeat-x 0 0;
+/*  background: transparent url("https://github.com/images/modules/pulls/dirty-shade.png") repeat-x 0 0; */
   border: solid 1px;
   color: #666;
   height: 1px;
@@ -279,3 +279,6 @@ pre {
   pre code, pre tt {
     background-color: transparent;
     border: none; }
+
+.error { color: red; }
+

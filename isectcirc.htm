@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta charset="utf-8">
+	<title>Find Intersections of Two Circles</title>
+
+	<link href="github.css" rel="stylesheet" />
+	
+	<script type="text/javascript" src="utmconv.js"></script>
+	<script type="text/javascript" src="output.js"></script>
+	<script type="text/javascript" src="input.js"></script>
+
+	<script type="text/javascript">
+/*jslint browser: true, vars: true, white: true */
+/*global UTMConv: false, Output: false, Input: false */
+
+	    var output = new Output("output", "error");
+
+	    function init() {
+		"use strict";
+		output.clearOutput();
+		document.getElementById("coords_input_form").onsubmit = function () { main(); return false; };
+		document.getElementById("clear_btn").onclick = function () { output.clearOutput(); };
+	    }
+
+	    window.onload = init;
+	</script>
+    </head>
+
+    <body>
+	<noscript>
+	    <span class="error">
+		This web page requires a browser that supports Javascript.<br />Your browser either does not support Javascript or it has Javascript disabled. Please upgrade your browser or enable Javascript support.<br />&nbsp;<br />
+	    </span>
+	</noscript>
+
+	<h1>Find Intersections of Two Circles</h1>
+	<form id="coords_input_form" action="#">
+	    Enter center coordinates and radii of two circles:<br />
+
+	    <select id="c1latdir"><option value="N" selected="selected">N</option><option value="S">S</option></select>
+	    <input type="text" id="c1latdeg" size="5" value="38" onfocus="select();" />
+	    <input type="text" id="c1latmin" size="10" value="38.908" onfocus="select();" />
+
+	    <select id="c1lngdir"><option value="W" selected="selected">W</option><option value="E">E</option></select>
+	    <input type="text" id="c1lngdeg" size="5" value="75" onfocus="select();" />
+	    <input type="text" id="c1lngmin" size="10" value="36.486" onfocus="select();" />
+	    <br />
+
+	    <input type="text" id="c1radius" size="10" value="14000" onfocus="select();" />
+	    <select id="c1unit">
+		<option value="m" selected="selected">meters</option>
+		<option value="km">kilometers</option>
+		<option value="ft">feet</option>
+		<option value="yd">yards</option>
+		<option value="mi">miles</option>
+	    </select>
+	    <br />
+	    <br />
+
+	    <select id="c2latdir"><option value="N" selected="selected">N</option><option value="S">S</option></select>
+	    <input type="text" id="c2latdeg" size="5" value="38" onfocus="select();" />
+	    <input type="text" id="c2latmin" size="10" value="33.002" onfocus="select();" />
+
+	    <select id="c2lngdir"><option value="W" selected="selected">W</option><option value="E">E</option></select>
+	    <input type="text" id="c2lngdeg" size="5" value="75" onfocus="select();" />
+	    <input type="text" id="c2lngmin" size="10" value="34.644" onfocus="select();" />
+	    <br />
+
+	    <input type="text" id="c2radius" size="10" value="15000" onfocus="select();" />
+	    <select id="c2unit">
+		<option value="m" selected="selected">meters</option>
+		<option value="km">kilometers</option>
+		<option value="ft">feet</option>
+		<option value="yd">yards</option>
+		<option value="mi">miles</option>
+	    </select>
+	    <br />
+	    <br />
+
+	    <input type="submit" value="Find intersections" />&nbsp;
+
+	    <input type="button" id="clear_btn" value="Clear results" />
+	</form>
+
+	<hr />
+	<div id="output"></div>
+    </body>
+</html>
+<!-- vim:set tw=0: -->
