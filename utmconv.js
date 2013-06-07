@@ -9,41 +9,50 @@
 
 var UTMConv = (function () {
 	"use strict";
-	var my = {};
 
 	var DatumInfo = {
-	    "wgs84"         : { "eqrad" : 6378137.0, "flat" : 298.2572236 },
-	    "nad83"         : { "eqrad" : 6378137.0, "flat" : 298.2572236 },
-	    "grs80"         : { "eqrad" : 6378137.0, "flat" : 298.2572215 },
-	    "wgs72"         : { "eqrad" : 6378135.0, "flat" : 298.2597208 },
-	    "aust1965"      : { "eqrad" : 6378160.0, "flat" : 298.2497323 },
-	    "krasovsky1940" : { "eqrad" : 6378245.0, "flat" : 298.2997381 },
-	    "na1927"        : { "eqrad" : 6378206.4, "flat" : 294.9786982 },
-	    "intl1924"      : { "eqrad" : 6378388.0, "flat" : 296.9993621 },
-	    "hayford1909"   : { "eqrad" : 6378388.0, "flat" : 296.9993621 },
-	    "clarke1880"    : { "eqrad" : 6378249.1, "flat" : 293.4660167 },
-	    "clarke1866"    : { "eqrad" : 6378206.4, "flat" : 294.9786982 },
-	    "airy1830"      : { "eqrad" : 6377563.4, "flat" : 299.3247788 },
-	    "bessel1841"    : { "eqrad" : 6377397.2, "flat" : 299.1527052 },
-	    "everest1830"   : { "eqrad" : 6377276.3, "flat" : 300.8021499 }
+	    wgs84         : { eqrad : 6378137.0, flat : 298.2572236 },
+	    nad83         : { eqrad : 6378137.0, flat : 298.2572236 },
+	    grs80         : { eqrad : 6378137.0, flat : 298.2572215 },
+	    wgs72         : { eqrad : 6378135.0, flat : 298.2597208 },
+	    aust1965      : { eqrad : 6378160.0, flat : 298.2497323 },
+	    krasovsky1940 : { eqrad : 6378245.0, flat : 298.2997381 },
+	    na1927        : { eqrad : 6378206.4, flat : 294.9786982 },
+	    intl1924      : { eqrad : 6378388.0, flat : 296.9993621 },
+	    hayford1909   : { eqrad : 6378388.0, flat : 296.9993621 },
+	    clarke1880    : { eqrad : 6378249.1, flat : 293.4660167 },
+	    clarke1866    : { eqrad : 6378206.4, flat : 294.9786982 },
+	    airy1830      : { eqrad : 6377563.4, flat : 299.3247788 },
+	    bessel1841    : { eqrad : 6377397.2, flat : 299.1527052 },
+	    everest1830   : { eqrad : 6377276.3, flat : 300.8021499 }
 	};
 
-	my.DegCoords = function (latd, lngd, datum) {
+	function UTMCoords(utmz, easting, northing) {
+	    this.utmz = utmz;
+	    this.easting = easting;
+	    this.northing = northing;
+	}
+
+	UTMCoords.prototype.toString = function () {
+	    return "Zone " + this.utmz + " Easting " + this.easting + " Northing " + this.northing;
+	};
+
+	function DegCoords(latd, lngd, datum) {
 	    this.latd = latd;
 	    this.lngd = lngd;
 	    this.datum = datum || "wgs84";
-	};
+	}
 
-	my.DegCoords.prototype.calc_utmz = function () {
+	DegCoords.prototype.calc_utmz = function () {
 	    // Calculate utm zone.
 	    return 1 + Math.floor((this.lngd + 180) / 6);
 	};
 
-	my.DegCoords.prototype.toString = function () {
+	DegCoords.prototype.toString = function () {
 	    return this.latd + ", " + this.lngd;
 	};
 
-	my.DegCoords.prototype.to_utm = function (utmz) {
+	DegCoords.prototype.to_utm = function (utmz) {
 	    // Convert to UTM. If utmz is not supplied, calculate it during the
 	    // conversion.
 	    var a = DatumInfo[this.datum].eqrad;//equatorial radius, meters. 
@@ -90,24 +99,14 @@ var UTMConv = (function () {
 	    // Let negative values stand for southern hemisphere.
 	    //if (y < 0){y = 10000000+y;}
 
-	    return new my.UTMCoords(utmz, x, y);
+	    return new UTMCoords(utmz, x, y);
 	};
 
-	my.UTMCoords = function (utmz, easting, northing) {
-	    this.utmz = utmz;
-	    this.easting = easting;
-	    this.northing = northing;
-	};
-
-	my.UTMCoords.prototype.toString = function () {
-	    return "Zone " + this.utmz + " Easting " + this.easting + " Northing " + this.northing;
-	};
-
-	my.UTMCoords.prototype.to_degmin = function (datum) {
+	UTMCoords.prototype.to_degmin = function (datum) {
 	    return this.to_deg(datum).to_degmin();
 	};
 
-	my.UTMCoords.prototype.to_deg = function (datum) {
+	UTMCoords.prototype.to_deg = function (datum) {
 	    // Convert UTM coords to Deg coords. If datum is unspecified,
 	    // default to wgs84.
 
@@ -148,10 +147,10 @@ var UTMConv = (function () {
 	    var lng = D*(1 + D*D*((-1 -2*T1 -C1)/6 + D*D*(5 - 2*C1 + 28*T1 - 3*C1*C1 +8*e0sq + 24*T1*T1)/120))/Math.cos(phi1);
 	    var lngd = zcm+lng/drad;
 
-	    return new my.DegCoords(phi/drad, lngd, datum);
+	    return new DegCoords(phi/drad, lngd, datum);
 	};
 
-	my.DegMinCoords = function (latdir, latdeg, latmin, lngdir, lngdeg, lngmin, datum) {
+	function DegMinCoords(latdir, latdeg, latmin, lngdir, lngdeg, lngmin, datum) {
 	    this.datum = datum || "wgs84";
 	    this.latdir = latdir;
 	    this.latdeg = latdeg;
@@ -159,9 +158,9 @@ var UTMConv = (function () {
 	    this.lngdir = lngdir;
 	    this.lngdeg = lngdeg;
 	    this.lngmin = lngmin;
-	};
+	}
 
-	my.DegCoords.prototype.to_degmin = function () {
+	DegCoords.prototype.to_degmin = function () {
 	    // Convert degree format to degree and minutes format.
 
 	    var latd = this.latd;
@@ -183,14 +182,14 @@ var UTMConv = (function () {
 	    var lngdeg = Math.floor(lngd);
 	    var lngmin = 60.0 * (lngd - lngdeg);
 
-	    return new my.DegMinCoords(latdir, latdeg, latmin, lngdir, lngdeg, lngmin, this.datum);
+	    return new DegMinCoords(latdir, latdeg, latmin, lngdir, lngdeg, lngmin, this.datum);
 	};
 
-	my.DegMinCoords.prototype.to_utm = function (utmz) {
+	DegMinCoords.prototype.to_utm = function (utmz) {
 	    return this.to_deg().to_utm(utmz);
 	};
 
-	my.DegMinCoords.prototype.to_deg = function () {
+	DegMinCoords.prototype.to_deg = function () {
 	    // Convert degree and minutes format to degree format.
 	    
 	    var latd = this.latdeg + this.latmin / 60.0;
@@ -201,13 +200,13 @@ var UTMConv = (function () {
 	    if ("W" === this.lngdir || "w" === this.lngdir) {
 		lngd = -lngd;
 	    }
-	    return new my.DegCoords(latd, lngd, this.datum);
+	    return new DegCoords(latd, lngd, this.datum);
 	};
 
-	my.DegMinCoords.prototype.toString = function () {
+	DegMinCoords.prototype.toString = function () {
 	    return this.latdir + " " + this.latdeg + " " + this.latmin + " " + this.lngdir + " " + this.lngdeg + " " + this.lngmin;
 	};
 
-	return my;
+	return { UTMCoords : UTMCoords, DegCoords : DegCoords, DegMinCoords : DegMinCoords };
     }());
 
