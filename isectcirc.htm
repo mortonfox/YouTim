@@ -16,6 +16,69 @@
 
 	    var output = new Output("output", "error");
 
+	    function convert_to_meters(dist, unit) {
+		"use strict";
+		switch (unit.toString().toLowerCase()) {
+		    case "m": break;
+		    case "km": dist *= 1000; break;
+		    case "ft": dist *= 0.3048; break;
+		    case "yd": dist *= 0.9144; break;
+		    case "mi": dist *= 1609.344; break;
+		    default:
+			throw new Error("Unknown distance unit '" + unit + "'");
+		}
+		return dist;
+	    }
+
+	    function main() {
+		"use strict";
+		try {
+		    var c1 = Input.get_degmin(
+			    "c1latdir",
+			    "c1latdeg", "first center latitude degrees",
+			    "c1latmin", "first center latitude minutes",
+			    "c1lngdir",
+			    "c1lngdeg", "first center longitude degrees",
+			    "c1lngmin", "first center longitude minutes");
+
+		    var c2 = Input.get_degmin(
+			    "c2latdir",
+			    "c2latdeg", "second center latitude degrees",
+			    "c2latmin", "second center latitude minutes",
+			    "c2lngdir",
+			    "c2lngdeg", "second center longitude degrees",
+			    "c2lngmin", "second center longitude minutes");
+
+		    // First coordinate sets the UTM zone for the other one.
+		    var utm1 = c1.to_utm();
+		    var utm2 = c2.to_utm(utm1.utmz);
+
+		    var c1radius = Input.get_float("c1radius", "first radius");
+		    var c1unit = document.getElementById("c1unit").value;
+		    var r1 = convert_to_meters(c1radius, c1unit);
+
+		    var c2radius = Input.get_float("c2radius", "second radius");
+		    var c2unit = document.getElementById("c2unit").value;
+		    var r2 = convert_to_meters(c2radius, c2unit);
+
+		    var frag = output.newFrag();
+		    frag.writeln_head(" ");
+		    frag.writeln("c1 center = " + c1);
+		    frag.writeln("c1 center = " + utm1);
+		    frag.writeln("c1 radius = " + r1 + " meters");
+		    frag.writeln(" ");
+		    frag.writeln("c2 center = " + c2);
+		    frag.writeln("c2 center = " + utm2);
+		    frag.writeln("c2 radius = " + r2 + " meters");
+		    frag.writeln(" ");
+
+		    output.writeFrag(frag);
+		}
+		catch (e) {
+		    output.errorln("Error: " + e.message);
+		}
+	    }
+
 	    function init() {
 		"use strict";
 		output.clearOutput();
