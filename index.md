@@ -7,7 +7,9 @@ title: YouTim home
 
 ## Introduction
 
-YouTim is a Javascript library containing functions for converting between UTM and geographic coordinates and vice versa. It also has some general-purpose functions for converting between degree and degree-minute coordinate formats and rendering coordinates as strings.
+UTM or [Universal Transverse Mercator](http://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system) is a 2-D Cartesian coordinate system. Converting coordinates from a geographic coordinate system, e.g. WGS84, which is typically used by GPS receivers, to UTM maps those coordinates from the curved surface of the Earth to a plane. This makes it simpler to perform geometric calculations on those coordinates. For example, in UTM, one would only need to use the Pythagorean theorem to calculate the distance between two coordinates, whereas in geographic coordinates, one would have to use the Great Circle formula.
+
+YouTim is an object-oriented Javascript library that simplifies converting to and from UTM coordinates. It also includes some general-purpose functions for converting between degree and degree-minute coordinate formats and rendering UTM and geographic coordinates as strings.
 
 ## Demo
 
