@@ -44,6 +44,8 @@ Converting from UTM to degree-minute coordinates is just as simple:
 
     var degmin = utm.to_degmin();
 
+For further information, see the [UTMConv Reference](https://github.com/mortonfox/YouTim/wiki/API-Reference).
+
 
 ## Demo
 
