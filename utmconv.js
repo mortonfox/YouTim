@@ -2,6 +2,8 @@
  * JS functions for converting between UTM and geographic coordinates and
  * vice versa.
  * 
+ * @author Po Shan Cheah http://mortonfox.com
+ *
  * Based on http://www.uwgb.edu/dutchs/UsefulData/UTMFormulas.htm
  * by Dr. Steve Dutch.
  */
