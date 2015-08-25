@@ -35,11 +35,9 @@ First, load the UTM library:
 
 Then create a degree-minute coordinate object and convert it to UTM like so:
 
-```
-var degmin = new UTMConv.DegMinCoords(latdir, latdeg, latmin, lngdir, lngdeg, lngmin, "wgs84");
-var utm = degmin.to_utm()
-console.log("UTM Zone = " + utm.utmz + " Easting = " + utm.easting + " Northing = " + utm.northing);
-```
+    var degmin = new UTMConv.DegMinCoords(latdir, latdeg, latmin, lngdir, lngdeg, lngmin, "wgs84");
+    var utm = degmin.to_utm()
+    console.log("UTM Zone = " + utm.utmz + " Easting = " + utm.easting + " Northing = " + utm.northing);
 
 That's all there is to it! Once you have the UTM coordinates, the easting is
 the x axis and the northing is the y axis in the Cartesian system.
@@ -58,12 +56,10 @@ if you have a set of geographic coordinates and you want to be sure that, once
 converted to UTM, those are all in the same zone. You'd do the conversion as
 follows:
 
-```
-// First coordinate sets the UTM zone for the other two.
-var utm1 = c1.to_utm();
-var utm2 = c2.to_utm(utm1.utmz);
-var utm3 = c3.to_utm(utm1.utmz);
-```
+    // First coordinate sets the UTM zone for the other two.
+    var utm1 = c1.to_utm();
+    var utm2 = c2.to_utm(utm1.utmz);
+    var utm3 = c3.to_utm(utm1.utmz);
 
 Converting from UTM to degree-minute coordinates is just as simple:
 
