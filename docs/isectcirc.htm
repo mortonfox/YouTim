@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta charset="utf-8">
+	<meta name="author" content="Po Shan Cheah http://mortonfox.com" />
+
+	<title>Find Intersections of Two Circles</title>
+
+	<link href="github.css" rel="stylesheet" />
+	
+	<script type="text/javascript" src="utmconv.js"></script>
+	<script type="text/javascript" src="output.js"></script>
+	<script type="text/javascript" src="input.js"></script>
+
+	<script type="text/javascript">
+/*jslint browser: true, vars: true, white: true */
+/*global UTMConv: false, Output: false, Input: false */
+
+	    var output = new Output("output", "error");
+
+	    function convert_to_meters(dist, unit) {
+		"use strict";
+		switch (unit.toString().toLowerCase()) {
+		    case "m": break;
+		    case "km": dist *= 1000; break;
+		    case "ft": dist *= 0.3048; break;
+		    case "yd": dist *= 0.9144; break;
+		    case "mi": dist *= 1609.344; break;
+		    default:
+			throw new Error("Unknown distance unit '" + unit + "'");
+		}
+		return dist;
+	    }
+
+	    function sqr(a) {
+		"use strict";
+		return a * a;
+	    }
+
+	    function dist(a, b) {
+		"use strict";
+		if (a.utmz !== b.utmz) {
+		    throw new Error("Can't calculate distance between UTM coordinates in different zones!");
+		}
+		return Math.sqrt(sqr(a.easting - b.easting) + sqr(a.northing - b.northing));
+	    }
+
+	    // Rotate a point around origin by theta radians.
+	    function rotate(x, y, theta) {
+		"use strict";
+		var rotx = Math.cos(theta) * x - Math.sin(theta) * y;
+		var roty = Math.sin(theta) * x + Math.cos(theta) * y;
+		return { x : rotx, y : roty };
+	    }
+
+	    function intersect(utm1, r1, utm2, r2) {
+		"use strict";
+
+		if (utm1.utmz !== utm2.utmz) {
+		    throw new Error("Can't perform calculations on UTM coordinates in different zones!");
+		}
+
+		var d = dist(utm1, utm2);
+		if (d < 1e-14) { throw new Error("The two circles are concentric!"); }
+		if (d > r1 + r2) { 
+		    throw new Error("The two circles do not intersect! Distance " + 
+			    d + " meters is greater than " + r1 + " and " + r2); 
+		}
+
+		/* Using formulae from http://mathworld.wolfram.com/Circle-CircleIntersection.html */
+		var x = (sqr(d) - sqr(r2) + sqr(r1)) / (2 * d);
+		var ysq = sqr(r1) - sqr(x);
+		var y = Math.sqrt(ysq);
+
+		var theta = Math.atan2(utm2.northing - utm1.northing, utm2.easting - utm1.easting);
+
+		/* Rotate intersection points around origin and add to utm1 to get actual intersection coordinates. */
+		var p1 = rotate(x, y, theta);
+		var p2 = rotate(x, -y, theta);
+
+		var isect1 = new UTMConv.UTMCoords(utm1.utmz, utm1.easting + p1.x, utm1.northing + p1.y);
+		var isect2 = new UTMConv.UTMCoords(utm1.utmz, utm1.easting + p2.x, utm1.northing + p2.y);
+		return [isect1, isect2];
+	    }
+
+	    function main() {
+		"use strict";
+		try {
+		    var c1 = Input.get_degmin(
+			    "c1latdir",
+			    "c1latdeg", "first center latitude degrees",
+			    "c1latmin", "first center latitude minutes",
+			    "c1lngdir",
+			    "c1lngdeg", "first center longitude degrees",
+			    "c1lngmin", "first center longitude minutes");
+
+		    var c2 = Input.get_degmin(
+			    "c2latdir",
+			    "c2latdeg", "second center latitude degrees",
+			    "c2latmin", "second center latitude minutes",
+			    "c2lngdir",
+			    "c2lngdeg", "second center longitude degrees",
+			    "c2lngmin", "second center longitude minutes");
+
+		    // First coordinate sets the UTM zone for the other one.
+		    var utm1 = c1.to_utm();
+		    var utm2 = c2.to_utm(utm1.utmz);
+
+		    var c1radius = Input.get_float("c1radius", "first radius");
+		    var c1unit = document.getElementById("c1unit").value;
+		    var r1 = convert_to_meters(c1radius, c1unit);
+
+		    var c2radius = Input.get_float("c2radius", "second radius");
+		    var c2unit = document.getElementById("c2unit").value;
+		    var r2 = convert_to_meters(c2radius, c2unit);
+
+		    var isects = intersect(utm1, r1, utm2, r2);
+		    var isect1 = isects[0];
+		    var isect2 = isects[1];
+
+		    var frag = output.newFrag();
+		    frag.writeln_head(" ");
+		    frag.writeln("c1 center = " + c1);
+		    frag.writeln("c1 center = " + utm1);
+		    frag.writeln("c1 radius = " + r1 + " meters");
+		    frag.writeln(" ");
+		    frag.writeln("c2 center = " + c2);
+		    frag.writeln("c2 center = " + utm2);
+		    frag.writeln("c2 radius = " + r2 + " meters");
+		    frag.writeln(" ");
+		    frag.writeln("dist between c1, c2 centers = " + dist(utm1, utm2) + " meters");
+		    frag.writeln(" ");
+
+		    frag.writeln("isect1 = " + isect1);
+		    frag.writeln("isect1 = " + isect1.to_degmin());
+		    frag.writeln("isect1 dist from c1 = " + dist(utm1, isect1) + " meters");
+		    frag.writeln("isect1 dist from c2 = " + dist(utm2, isect1) + " meters");
+		    frag.writeln(" ");
+		    frag.writeln("isect2 = " + isect2);
+		    frag.writeln("isect2 = " + isect2.to_degmin());
+		    frag.writeln("isect2 dist from c1 = " + dist(utm1, isect2) + " meters");
+		    frag.writeln("isect2 dist from c2 = " + dist(utm2, isect2) + " meters");
+		    frag.writeln(" ");
+
+		    output.writeFrag(frag);
+		}
+		catch (e) {
+		    output.errorln("Error: " + e.message);
+		}
+	    }
+
+	    function init() {
+		"use strict";
+		output.clearOutput();
+		document.getElementById("coords_input_form").onsubmit = function () { main(); return false; };
+		document.getElementById("clear_btn").onclick = function () { output.clearOutput(); };
+	    }
+
+	    window.onload = init;
+	</script>
+    </head>
+
+    <body>
+	<noscript>
+	    <span class="error">
+		This web page requires a browser that supports Javascript.<br />Your browser either does not support Javascript or it has Javascript disabled. Please upgrade your browser or enable Javascript support.<br />&nbsp;<br />
+	    </span>
+	</noscript>
+
+	<h1>Find Intersections of Two Circles</h1>
+	<form id="coords_input_form" action="#">
+	    Enter center coordinates and radii of two circles:<br />
+
+	    <select id="c1latdir"><option value="N" selected="selected">N</option><option value="S">S</option></select>
+	    <input type="text" id="c1latdeg" size="5" value="38" onfocus="select();" />
+	    <input type="text" id="c1latmin" size="10" value="38.908" onfocus="select();" />
+
+	    <select id="c1lngdir"><option value="W" selected="selected">W</option><option value="E">E</option></select>
+	    <input type="text" id="c1lngdeg" size="5" value="75" onfocus="select();" />
+	    <input type="text" id="c1lngmin" size="10" value="36.486" onfocus="select();" />
+	    <br />
+
+	    <input type="text" id="c1radius" size="10" value="7000" onfocus="select();" />
+	    <select id="c1unit">
+		<option value="m" selected="selected">meters</option>
+		<option value="km">kilometers</option>
+		<option value="ft">feet</option>
+		<option value="yd">yards</option>
+		<option value="mi">miles</option>
+	    </select>
+	    <br />
+	    <br />
+
+	    <select id="c2latdir"><option value="N" selected="selected">N</option><option value="S">S</option></select>
+	    <input type="text" id="c2latdeg" size="5" value="38" onfocus="select();" />
+	    <input type="text" id="c2latmin" size="10" value="33.002" onfocus="select();" />
+
+	    <select id="c2lngdir"><option value="W" selected="selected">W</option><option value="E">E</option></select>
+	    <input type="text" id="c2lngdeg" size="5" value="75" onfocus="select();" />
+	    <input type="text" id="c2lngmin" size="10" value="34.644" onfocus="select();" />
+	    <br />
+
+	    <input type="text" id="c2radius" size="10" value="5000" onfocus="select();" />
+	    <select id="c2unit">
+		<option value="m" selected="selected">meters</option>
+		<option value="km">kilometers</option>
+		<option value="ft">feet</option>
+		<option value="yd">yards</option>
+		<option value="mi">miles</option>
+	    </select>
+	    <br />
+	    <br />
+
+	    <input type="submit" value="Find intersections" />
+
+	    <input type="button" id="clear_btn" value="Clear results" />
+	</form>
+
+	<hr />
+	<div id="output"></div>
+    </body>
+</html>
+<!-- vim:set tw=0: -->

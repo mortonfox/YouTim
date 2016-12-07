@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta charset="utf-8">
+	<meta name="author" content="Po Shan Cheah http://mortonfox.com" />
+
+	<title>UTM conversion demo</title>
+
+	<link href="github.css" rel="stylesheet" />
+	
+	<script type="text/javascript" src="utmconv.js"></script>
+	<script type="text/javascript" src="output.js"></script>
+	<script type="text/javascript" src="input.js"></script>
+
+	<script type="text/javascript">
+/*jslint browser: true, vars: true, white: true */
+/*global UTMConv: false, Output: false, Input: false */
+
+	    var output = new Output("output", "error");
+
+	    function conv_geo_to_utm() {
+		"use strict";
+		try {
+		    var degmin = Input.get_degmin(
+			    "latdir",
+			    "latdeg", "latitude degrees",
+			    "latmin", "latitude minutes",
+			    "lngdir",
+			    "lngdeg", "longitude degrees",
+			    "lngmin", "longitude minutes");
+
+		    var frag = output.newFrag();
+		    frag.writeln_head(degmin);
+		    frag.writeln(degmin.to_utm());
+		    frag.writeln(" ");
+		    output.writeFrag(frag);
+		}
+		catch (e) {
+		    output.errorln("Error: " + e.message);
+		}
+	    }
+
+	    function conv_utm_to_geo() {
+		"use strict";
+		try {
+		    var utm = Input.get_utm(
+			    "utmz", "UTM zone",
+			    "easting", "UTM easting",
+			    "northing", "UTM northing");
+
+		    var frag = output.newFrag();
+		    frag.writeln_head(utm);
+		    frag.writeln(utm.to_degmin());
+		    frag.writeln(" ");
+		    output.writeFrag(frag);
+		}
+		catch (e) {
+		    output.errorln("Error: " + e.message);
+		}
+	    }
+
+	    function init() {
+		"use strict";
+		output.clearOutput();
+		document.getElementById("geo_to_utm_form").onsubmit = function () { conv_geo_to_utm(); return false; };
+		document.getElementById("utm_to_geo_form").onsubmit = function () { conv_utm_to_geo(); return false; };
+		document.getElementById("clear_btn").onclick = function () { output.clearOutput(); };
+	    }
+
+	    window.onload = init;
+	</script>
+    </head>
+
+    <body>
+	<noscript>
+	    <span class="error">
+		This web page requires a browser that supports Javascript.<br />Your browser either does not support Javascript or it has Javascript disabled. Please upgrade your browser or enable Javascript support.<br />&nbsp;<br />
+	    </span>
+	</noscript>
+
+	<h1>UTM conversion demo</h1>
+	<form id="geo_to_utm_form" action="#">
+	    Enter dd mm.mmm coordinates here to get UTM coordinates below:<br />
+
+	    <select id="latdir"><option value="N" selected="selected">N</option><option value="S">S</option></select>
+	    <input type="text" id="latdeg" size="5" value="40" onfocus="select();" />
+	    <input type="text" id="latmin" size="10" value="30.0" onfocus="select();" />
+
+	    <select id="lngdir"><option value="W" selected="selected">W</option><option value="E">E</option></select>
+	    <input type="text" id="lngdeg" size="5" value="73" onfocus="select();" />
+	    <input type="text" id="lngmin" size="10" value="30.0" onfocus="select();" />
+
+	    <input type="submit" value="Convert it" />
+	</form>
+
+	<br />
+
+	<form id="utm_to_geo_form" action="#">
+	    Enter UTM coordinates here to get dd mm.mmm coordinates below:<br />
+
+	    <input type="text" id="utmz" size="4" value="18" onfocus="select();" />
+	    <input type="text" id="easting" size="20" value="627103.1" onfocus="select();" />
+	    <input type="text" id="northing" size="20" value="4484335.4" onfocus="select();" />
+
+	    <input type="submit" value="Convert it" />
+	</form>
+
+	<br />
+
+	<form action="#">
+	    <input type="button" id="clear_btn" value="Clear results" />
+	</form>
+
+	<hr />
+	<div id="output"></div>
+    </body>
+</html>
+<!-- vim:set tw=0: -->
