@@ -77,7 +77,7 @@ YouTim includes a few examples:
 
 ## Source Code
 
-To view or clone the code and examples, see: [https://github.com/mortonfox/YouTim/tree/gh-pages](https://github.com/mortonfox/YouTim/tree/gh-pages)
+To view the code and examples, see: <https://github.com/mortonfox/YouTim/tree/master/docs>
 
 Or just use your browser's "view source" feature when viewing the above examples.
 
