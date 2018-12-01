@@ -1,3 +1,3 @@
-# YouTim - Javascript UTM conversion library and usage examples
+# 全球高斯克吕格投影（6度分带）
 
-See <http://mortonfox.github.io/YouTim/> for demos and instructions.
+分带编号从西经180-西经0为31-60。东经0度-东经180度为1-30。
